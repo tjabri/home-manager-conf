@@ -29,6 +29,8 @@
     # # fonts?
     # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
+    nerd-fonts.jetbrains-mono
+
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
     # # environment:
@@ -94,6 +96,16 @@
 	export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin:$HOME/.cargo/bin"
 	'';
 	historyFile = ".bash_history";
+  };
+  fonts.fontconfig.enable = true;
+  programs.git = {
+    enable = true;
+    extraConfig = {
+      user = {
+        name = "Tarik Jabri";
+        email = "tjabri@gmail.com";
+      };
+    };
   };
 
 }
