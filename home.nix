@@ -98,6 +98,7 @@
 	historyFile = ".bash_history";
   };
   fonts.fontconfig.enable = true;
+  
   programs.git = {
     enable = true;
     extraConfig = {
@@ -108,4 +109,5 @@
     };
   };
 
+  services.ssh-agent.enable = true;
 }
