@@ -42,12 +42,9 @@
     yq-go
     git
     go
-
     kubectl
     minikube
     kind
-
-
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -154,6 +151,9 @@
       ruff
       basedpyright
       tree-sitter
+      fd
+      ripgrep
+
     ];
   };
   # Symlink your Neovim configuration (or delete the line to manage .config/nvim directly)
@@ -177,7 +177,6 @@
     fi
     run $args nvim --headless '+Lazy! restore' +qa
   '';
-
 
   services.ssh-agent.enable = true;
 }
