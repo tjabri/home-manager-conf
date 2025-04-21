@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 
 {
@@ -42,7 +42,6 @@
     yq-go
     git
     go
-    neovim
 
     kubectl
     minikube
@@ -95,7 +94,7 @@
 	bashrcExtra = ''
 	export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin:$HOME/.cargo/bin"
 	'';
-	historyFile = ".bash_history";
+	historyFile = "~/.bash_history";
   };
   fonts.fontconfig.enable = true;
   
@@ -108,6 +107,77 @@
       };
     };
   };
+  
+  programs.neovim = {
+    enable = true;
+    withPython3 = true;
+    withNodeJs = true;
+    extraLuaConfig = ''
+      -- bootstrap lazy.nvim, LazyVim and your plugins
+      require("config.lazy")
+      vim.opt.tabstop = 4
+      vim.opt.shiftwidth = 4
+      vim.opt.softtabstop = 4
+      vim.opt.expandtab = true
+    '';
+    extraPackages = with pkgs; [
+      bash-language-server
+      buf
+      # clang provides both LSP Server for C/C++ and a C compiler for treesitter parsers 
+      clang
+      lldb
+      lua-language-server
+      stylua
+      gopls
+      gomodifytags
+      lua51Packages.lua
+      lua51Packages.luv
+      lua51Packages.luarocks-nix
+      lua51Packages.jsregexp
+      statix
+      nixpkgs-fmt
+      go-tools
+      rust-analyzer
+      dockerfile-language-server-nodejs
+      emmet-language-server
+      vscode-langservers-extracted
+      nixd
+      nil
+      prettierd
+      typescript-language-server
+      eslint
+      python312Packages.debugpy
+      delve
+      taplo
+      yaml-language-server
+      terraform-ls
+      ruff
+      basedpyright
+      tree-sitter
+    ];
+  };
+  # Symlink your Neovim configuration (or delete the line to manage .config/nvim directly)
+  # xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "/home/username/dotfiles/config/nvim";
+
+  # Tools available during activation
+  home.extraActivationPath = with pkgs; [
+    git
+    gnumake
+    gcc
+    config.programs.neovim.finalPackage
+    # The package above is preferred, but if you can't make it work, use this instead:
+    # neovim
+  ];
+
+  # Activation script to set up Neovim plugins
+  home.activation.updateNeovimState = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    args=""
+    if [[ -z "''${VERBOSE+x}" ]]; then
+      args="--quiet"
+    fi
+    run $args nvim --headless '+Lazy! restore' +qa
+  '';
+
 
   services.ssh-agent.enable = true;
 }
